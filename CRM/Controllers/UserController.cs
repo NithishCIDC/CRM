@@ -29,7 +29,7 @@ namespace CRM.Controllers
         public async Task<IActionResult> Login(User entity)
         {
             await _userRepository.Login(entity);
-            return Ok("User Logged in Successfully");
+            return Ok();
         }
     }
 }
