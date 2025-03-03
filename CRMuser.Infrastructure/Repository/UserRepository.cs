@@ -16,7 +16,7 @@ namespace CRMuser.Infrastructure.Repository
         private readonly UserDbContext _dbcontext;
         private readonly ITokenGeneration _tokenGeneration;
 
-        public UserRepository(UserDbContext dbContext,ITokenGeneration tokengeneration)
+        public UserRepository(UserDbContext dbContext, ITokenGeneration tokengeneration)
         {
             _dbcontext = dbContext;
             _tokenGeneration = tokengeneration;
@@ -25,18 +25,11 @@ namespace CRMuser.Infrastructure.Repository
         {
             var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.Password);
 
-            if (user is not null)
+            if (user is null)
             {
-                if (user.Email == entity.Email && user.Password == entity.Password)
-                {
-                    return _tokenGeneration.GenerateToken(user.Email!);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid Email or Password");
-                }
+                return null!;
             }
-            return null!;
+            return _tokenGeneration.GenerateToken(user!.Email!);
         }
 
         public async Task Register(User entity)
@@ -45,6 +38,6 @@ namespace CRMuser.Infrastructure.Repository
             await _dbcontext.SaveChangesAsync();
         }
 
-        
+
     }
 }
