@@ -1,9 +1,5 @@
-﻿using CRMUser.domain.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CRMuser.Application.DTO;
+using CRMUser.domain.Model;
 
 namespace CRMUser.domain.Interface
 {
@@ -11,6 +7,6 @@ namespace CRMUser.domain.Interface
     {
         Task Register(User entity);
 
-        Task<string> Login(User entity);
+        Task<string> Login(LoginDTO entity);
     }
 }

@@ -1,4 +1,5 @@
-﻿using CRMuser.Infrastructure.Data;
+﻿using CRMuser.Application.DTO;
+using CRMuser.Infrastructure.Data;
 using CRMUser.domain.Interface;
 using CRMUser.domain.Model;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ namespace CRMuser.Infrastructure.Repository
             _dbcontext = dbContext;
             _tokenGeneration = tokengeneration;
         }
-        public async Task<string> Login(User entity)
+        public async Task<string> Login(LoginDTO entity)
         {
             var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.Password);
 
@@ -31,7 +32,5 @@ namespace CRMuser.Infrastructure.Repository
             await _dbcontext.Users.AddAsync(entity);
             await _dbcontext.SaveChangesAsync();
         }
-
-
     }
 }

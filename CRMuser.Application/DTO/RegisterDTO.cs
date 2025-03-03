@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace CRMuser.Application.DTO
 {
-    public class UserDTO
+    public class RegisterDTO
     {
         public string? Name { get; set; }
 

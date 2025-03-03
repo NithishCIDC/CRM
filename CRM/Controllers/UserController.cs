@@ -1,7 +1,7 @@
 ﻿using CRMuser.Application.DTO;
 using CRMUser.domain.Interface;
 using CRMUser.domain.Model;
-using Microsoft.AspNetCore.Http;
+using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CRM.Controllers
@@ -15,21 +15,51 @@ namespace CRM.Controllers
         {
             _userRepository = userRepository;
         }
+
         [HttpPost("Register")]
-        public async Task<IActionResult> Register([FromBody] UserDTO entity)
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Register([FromBody] RegisterDTO entity)
         {
-            if (ModelState.IsValid)
+            try
             {
-                await _userRepository.Register(entity);
+                if (ModelState.IsValid)
+                {
+                    await _userRepository.Register(entity.Adapt<User>());
+                    return Accepted(entity);
+                }
+                return BadRequest(new { Message = "Invalid Request" });
             }
-           
-            return Ok(entity);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ex.Message });
+            }
+
         }
+
         [HttpPost("Login")]
-        public async Task<IActionResult> Login(User entity)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Login(LoginDTO entity)
         {
-            await _userRepository.Login(entity);
-            return Ok();
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var _token = await _userRepository.Login(entity);
+                    if(_token is null) return Unauthorized(new { Message = "Invalid Credentials" });
+                    return Ok(new { token = _token });
+                }
+                return BadRequest(new { Message = "Invalid Request" });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ex.Message });
+            }
         }
     }
 }
