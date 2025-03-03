@@ -1,13 +1,7 @@
-﻿using CRMuser.Application.DTO;
-using CRMuser.Infrastructure.Data;
+﻿using CRMuser.Infrastructure.Data;
 using CRMUser.domain.Interface;
 using CRMUser.domain.Model;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CRMuser.Infrastructure.Repository
 {
