@@ -20,11 +20,11 @@ namespace CRMuser.Infrastructure.Repository
         {
             var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.Password);
 
-            if (user is null)
+            if (user is not null)
             {
-                return null!;
+                return _tokenGeneration.GenerateToken(user.Email!, user.Name!);
             }
-            return _tokenGeneration.GenerateToken(user!.Email!);
+            return null!;
         }
 
         public async Task Register(User entity)

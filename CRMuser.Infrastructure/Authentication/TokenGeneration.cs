@@ -24,6 +24,7 @@ namespace CRMuser.Infrastructure.Authentication
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.Name, name),
                 new Claim(ClaimTypes.Role, "User"),
             };
 
