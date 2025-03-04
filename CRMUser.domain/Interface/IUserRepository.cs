@@ -8,5 +8,9 @@ namespace CRMUser.domain.Interface
         Task Register(User entity);
 
         Task<string> Login(LoginDTO entity);
+
+        Task<bool> ChangePassword(ChangePasswordDTO entity);
+
+        Task<bool> ResetPassword(ResetPasswordDTO entity);
     }
 }

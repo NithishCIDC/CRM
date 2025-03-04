@@ -61,6 +61,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+builder.Services.AddScoped<IEmailService, EmailService>(); 
+
 var app = builder.Build();
 
 
