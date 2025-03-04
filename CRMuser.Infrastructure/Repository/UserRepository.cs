@@ -1,4 +1,5 @@
 ﻿using CRMuser.Application.DTO;
+using CRMuser.Application.Interfaces;
 using CRMuser.Infrastructure.Data;
 using CRMUser.domain.Interface;
 using CRMUser.domain.Model;
@@ -9,12 +10,12 @@ namespace CRMuser.Infrastructure.Repository
     public class UserRepository : IUserRepository
     {
         private readonly UserDbContext _dbcontext;
-        private readonly ITokenGeneration _tokenGeneration;
+        private readonly ITokenService _tokenService;
 
-        public UserRepository(UserDbContext dbContext, ITokenGeneration tokengeneration)
+        public UserRepository(UserDbContext dbContext, ITokenService tokenService)
         {
             _dbcontext = dbContext;
-            _tokenGeneration = tokengeneration;
+            _tokenService = tokenService;
         }
         public async Task<string> Login(LoginDTO entity)
         {
@@ -22,7 +23,7 @@ namespace CRMuser.Infrastructure.Repository
 
             if (user is not null)
             {
-                return _tokenGeneration.GenerateToken(user.Email!, user.Name!);
+                return _tokenService.GenerateToken(user.Email!, user.Name!);
             }
             return null!;
         }

@@ -1,4 +1,4 @@
-﻿using CRMUser.domain.Interface;
+﻿using CRMuser.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -6,13 +6,13 @@ using System.Security.Claims;
 using System.Text;
 
 
-namespace CRMuser.Infrastructure.Authentication
+namespace CRMuser.Application.Service
 {
-    public class TokenGeneration : ITokenGeneration
+    public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
 
-        public TokenGeneration( IConfiguration configuration)
+        public TokenService(IConfiguration configuration)
         {
             _configuration = configuration;
         }

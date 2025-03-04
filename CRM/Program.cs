@@ -1,4 +1,5 @@
-using CRMuser.Infrastructure.Authentication;
+using CRMuser.Application.Interfaces;
+using CRMuser.Application.Service;
 using CRMuser.Infrastructure.Data;
 using CRMuser.Infrastructure.Repository;
 using CRMUser.domain.Interface;
@@ -56,7 +57,7 @@ builder.Services.AddAuthentication(options =>
    });
 #endregion
 
-builder.Services.AddScoped<ITokenGeneration, TokenGeneration>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
@@ -70,6 +71,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("CORS_Policy");
 
 app.UseAuthentication();
 
