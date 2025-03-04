@@ -15,6 +15,19 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+#region CORS
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CORS_Policy",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        });
+});
+
+#endregion
+
 #region DbContext
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
@@ -57,6 +70,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
