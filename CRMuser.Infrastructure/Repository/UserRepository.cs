@@ -12,27 +12,36 @@ namespace CRMuser.Infrastructure.Repository
         private readonly UserDbContext _dbcontext;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly IOtpService _otpService;
 
-        public UserRepository(UserDbContext dbContext, ITokenService tokenService, IEmailService emailService)
+        public UserRepository(UserDbContext dbContext, ITokenService tokenService, IEmailService emailService, IOtpService otpService)
         {
             _dbcontext = dbContext;
             _tokenService = tokenService;
             _emailService = emailService;
+            _otpService = otpService;
         }
+
 
         public async Task<bool> ChangePassword(ChangePasswordDTO entity)
         {
-            var newPassworddata = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.Password);
+            var oldPassworddata = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.OldPassword);
 
-            if (newPassworddata is not null)
+            if (oldPassworddata is not null)
             {
-                newPassworddata.Password = entity.NewPassword;
-                _dbcontext.Users.Update(newPassworddata);
+                oldPassworddata.Password = entity.NewPassword;
+                _dbcontext.Users.Update(oldPassworddata);
                 await _dbcontext.SaveChangesAsync();
-
                 return true;
             }
             return false;
+        }
+
+        public async Task<User> GetByEmail(string email)
+        {
+            var data = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return data!;
+            
         }
 
         public async Task<string> Login(LoginDTO entity)
@@ -50,18 +59,26 @@ namespace CRMuser.Infrastructure.Repository
         {
             await _dbcontext.Users.AddAsync(entity);
             await _dbcontext.SaveChangesAsync();
+            _emailService.Email(entity.Email!, "Welcome to CRM", "You have successfully registered");
         }
 
         public async Task<bool> ResetPassword(ResetPasswordDTO entity)
         {
-            var resetdata = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email);
+            var email = _otpService.GetVerifiedEmail();
+
+            var resetdata = await GetByEmail(email);
 
             if (resetdata is not null)
             {
-                resetdata.Password = entity.NewPassword;
-                 _dbcontext.Users.Update(resetdata);
-                await _dbcontext.SaveChangesAsync();
-                return true;
+                if (entity.NewPassword == entity.ConfirmPassword)
+                {
+                    resetdata.Password = entity.NewPassword;
+                    _dbcontext.Users.Update(resetdata);
+                    await _dbcontext.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+
             }
             return false;
         }

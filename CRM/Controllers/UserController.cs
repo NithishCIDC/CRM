@@ -1,4 +1,6 @@
 ﻿using CRMuser.Application.DTO;
+using CRMuser.Application.Interfaces;
+using CRMuser.Application.Service;
 using CRMUser.domain.Interface;
 using CRMUser.domain.Model;
 using Mapster;
@@ -11,9 +13,14 @@ namespace CRM.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
-        public UserController(IUserRepository userRepository)
+        private readonly IEmailService _emailService;
+        private readonly IOtpService _otpService;
+
+        public UserController(IUserRepository userRepository, IOtpService otpService, IEmailService emailService)
         {
             _userRepository = userRepository;
+            _otpService = otpService;
+            _emailService = emailService;
         }
 
         [HttpPost("Register")]
@@ -50,7 +57,7 @@ namespace CRM.Controllers
                 if (ModelState.IsValid)
                 {
                     var _token = await _userRepository.Login(entity);
-                    if(_token is null) 
+                    if (_token is null)
                         return Unauthorized(new { Message = "Invalid Credentials" });
                     return Ok(new { token = _token });
                 }
@@ -63,27 +70,49 @@ namespace CRM.Controllers
             }
         }
 
-        [HttpPost("ChangePassword")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> ChangePassword(ChangePasswordDTO entity)
+        [HttpPost("GenerateOtp")]
+
+        public IActionResult GenerateOtp([FromBody] GenerateOtp generateotp)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var _result = await _userRepository.ChangePassword(entity);
-                    if (_result)
-                        return Ok(new { Message = "Password Changed Successfully" });
-                    return BadRequest(new { Message = "Password Change is failesd due to invalid Credentials;" });
+                    var otp = _otpService.GenerateOtp(generateotp.Email!);
+                    _emailService.Email(generateotp.Email!, "Reset Password", $"Your <b>Reset Password OTP</b> is \"{otp}\"");
+                    return Accepted(otp);
                 }
-                return BadRequest(new { Message = "Invalid Request" });
+                return NotFound(new { message="Email Requied for generate Password"});
+            
+               
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { ex.Message });
+            }
+           
+        }
+
+        [HttpPost("VerifyOtp")]
+        public IActionResult VerifyOtp([FromBody] VerifyOtpDTO verifyOtp)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var result = _otpService.VerifyOtp(verifyOtp.Otp!);
+                    return Ok(result);
+                }
+                return BadRequest(new { message = "Invalid Request" });
             }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new { ex.Message });
             }
+
         }
 
         [HttpPost("ResetPassword")]
@@ -108,5 +137,7 @@ namespace CRM.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new { ex.Message });
             }
         }
+
+
     }
 }

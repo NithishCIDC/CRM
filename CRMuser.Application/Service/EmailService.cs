@@ -19,7 +19,7 @@ namespace CRMuser.Application.Service
 
             using var client = new SmtpClient();
             client.Connect("smtp.gmail.com", 587, false);
-            client.Authenticate("2k20cse055@kiot.ac.in", "2k20cse055");
+            client.Authenticate("Theboyscidc@gmail.com", "qordywyabamdbwav");
             client.Send(message);
             client.Disconnect(true);
         }

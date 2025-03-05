@@ -57,11 +57,15 @@ builder.Services.AddAuthentication(options =>
    });
 #endregion
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>(); 
+
+builder.Services.AddScoped<IOtpService, OtpService>();
 
 var app = builder.Build();
 

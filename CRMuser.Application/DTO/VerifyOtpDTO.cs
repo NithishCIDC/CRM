@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CRMuser.Application.DTO
 {
-    public class ResetPasswordDTO
+    public class VerifyOtpDTO
     {
-        public string? NewPassword { get; set; }
-        public string? ConfirmPassword { get; set; }
+        public string? Otp { get; set; }
     }
 }
