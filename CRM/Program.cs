@@ -1,12 +1,13 @@
-using CRMuser.Application.Interfaces;
-using CRMuser.Application.Service;
-using CRMuser.Infrastructure.Data;
-using CRMuser.Infrastructure.Repository;
-using CRMUser.domain.Interface;
+using CRM.Application.Interfaces;
+using CRM.Application.Service;
+using CRM.Infrastructure.Data;
+using CRM.Infrastructure.Repository;
+using CRM.domain.Interface;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using CRM.Service.AuthService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +31,7 @@ builder.Services.AddCors(options =>
 #endregion
 
 #region DbContext
-builder.Services.AddDbContext<UserDbContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("UserConnection"));
 });
@@ -57,14 +58,12 @@ builder.Services.AddAuthentication(options =>
    });
 #endregion
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddMemoryCache();
-
-builder.Services.AddScoped<ITokenService, TokenService>();
-
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, EmailService>(); 
-
 builder.Services.AddScoped<IOtpService, OtpService>();
 
 var app = builder.Build();
