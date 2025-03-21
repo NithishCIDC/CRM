@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapster" Version="7.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CRM.Application\CRM.Application.csproj" />
     <ProjectReference Include="..\CRM.domain\CRM.domain.csproj" />
   </ItemGroup>

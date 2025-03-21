@@ -3,7 +3,7 @@ using CRM.Application.DTO;
 
 namespace CRM.domain.Interface
 {
-    public interface IUserRepository
+    public interface IUserRepository : IGenericRepository<User>
     {
         Task Register(User entity);
 

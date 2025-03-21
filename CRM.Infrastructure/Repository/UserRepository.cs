@@ -8,11 +8,11 @@ using Org.BouncyCastle.Ocsp;
 
 namespace CRM.Infrastructure.Repository
 {
-    public class UserRepository : IUserRepository
+    public class UserRepository :  GenericRepository<User> , IUserRepository
     {
         private readonly ApplicationDbContext _dbcontext;
 
-        public UserRepository(ApplicationDbContext dbContext)
+        public UserRepository(ApplicationDbContext dbContext) : base(dbContext)
         {
             _dbcontext = dbContext;
         }

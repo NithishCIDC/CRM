@@ -8,12 +8,12 @@ namespace CRM.domain.Model
     public class BaseModel
     {
         [Key]
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public DateTime Created_At { get; set; }
         public DateTime Updated_At { get; set; } = DateTime.Now;
-        public string Created_By { get; set; }
-        public string Updated_By { get; set; }
+        public string? Created_By { get; set; }
+        public string? Updated_By { get; set; }
     }
 }

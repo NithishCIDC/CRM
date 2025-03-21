@@ -34,7 +34,7 @@ namespace CRM.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var User = _authService.GetByEmail(entity.Email);
+                    var User = _authService.GetByEmail(entity.Email!);
                     if (User is not null)
                     {
                         return BadRequest(new AuthResponseError { Error = "User Already Exist" });
@@ -46,7 +46,7 @@ namespace CRM.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new AuthResponseError { Error = "Internal Server Error" });
+                return StatusCode(500, new AuthResponseError { Error = ex+" Internal Server Error" });
             }
         }
 
@@ -74,7 +74,7 @@ namespace CRM.Controllers
             }
         }
 
-        [HttpPost("GenerateOtp")]
+        [HttpPost("password-reset")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -105,7 +105,7 @@ namespace CRM.Controllers
 
         }
 
-        [HttpPost("VerifyOtp")]
+        [HttpPost("password-reset/verify")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -127,7 +127,7 @@ namespace CRM.Controllers
 
         }
 
-        [HttpPost("ResetPassword")]
+        [HttpPost("password-reset/new-password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

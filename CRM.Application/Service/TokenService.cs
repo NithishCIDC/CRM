@@ -17,16 +17,16 @@ namespace CRM.Application.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(string email, string name)
+        public string GenerateToken(Guid userId, Guid organizationId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
             var claims = new List<Claim>
-            {
-                new(ClaimTypes.Email, email),
-                new(ClaimTypes.Name, name),
-                new(ClaimTypes.Role, "User"),
-            };
+                {
+                    new("UserId", userId.ToString()),
+                    new("OrgId", organizationId.ToString()),
+                    new(ClaimTypes.Role, roleId.ToString())
+                };
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -39,7 +39,6 @@ namespace CRM.Application.Service
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
-
         }
     }
 }

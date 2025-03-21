@@ -9,8 +9,8 @@ namespace CRM.domain.Model
     public class UserRoles
     {
         public int Id { get; set; }
-        public string Role { get; set; }
-        public int Org_Id { get; set; }
-        public Organization Organization { get; set; }
+        public string? Role { get; set; }
+        public Guid OrganizationId { get; set; }
+        public Organization? Organization { get; set; }
     }
 }
