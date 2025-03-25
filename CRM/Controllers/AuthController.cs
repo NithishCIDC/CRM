@@ -5,7 +5,6 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CRM.Service.AuthService;
-using System.Security.Claims;
 
 namespace CRM.Controllers
 {
