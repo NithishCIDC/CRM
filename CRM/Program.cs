@@ -72,7 +72,9 @@ builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IOrganizationService, OrganizationService>();
 builder.Services.AddScoped<IBranchService, BranchService>();
 
-builder.Services.AddEndpointsApiExplorer(); 
+builder.Services.AddEndpointsApiExplorer();
+
+#region Swagger Auth
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "CRM", Version = "v1" });
@@ -97,6 +99,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+#endregion
 
 var app = builder.Build();
 
