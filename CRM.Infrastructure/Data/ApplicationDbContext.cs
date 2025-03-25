@@ -13,5 +13,6 @@ namespace CRM.Infrastructure.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Branch> Branches { get; set; }
         public DbSet<Organization> Organization { get; set; }
+        public DbSet<SuperAdmin> SuperAdmin { get; set; }
     }
 }
