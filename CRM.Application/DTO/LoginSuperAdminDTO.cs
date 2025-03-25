@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace CRM.Application.DTO
 {
-    public class LoginSuperAdminDTO
+    public class LoginMasterAdminDTO
     {
-        public string? SuperAdminEmail { get; set; }
-        public string? SuperAdminPassword { get; set; }
+        public string? MasterAdminEmail { get; set; }
+        public string? MasterAdminPassword { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace CRM.Infrastructure.Repository
             Branch = new BranchRepository(_dbcontext);
             Organization = new OrganizationRepository(_dbcontext);
             User = new UserRepository(_dbcontext);
-            SuperAdmin = new SuperAdminRepository(_dbcontext);
+            MasterAdmin = new MasterAdminRepository(_dbcontext);
         }
         public IBranchRepository Branch { get; private set; }
 
@@ -25,7 +25,7 @@ namespace CRM.Infrastructure.Repository
 
         public IUserRepository User { get; private set; }
 
-        public ISuperAdminRepository SuperAdmin { get; private set; }
+        public IMasterAdminRepository MasterAdmin { get; private set; }
 
         public void Dispose()
         {

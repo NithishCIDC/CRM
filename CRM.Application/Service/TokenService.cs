@@ -42,7 +42,7 @@ namespace CRM.Application.Service
             return tokenHandler.WriteToken(token);
         }
 
-        public string SuperAdminGenerateToken(string email, int roleId)
+        public string MasterAdminGenerateToken(string email, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);

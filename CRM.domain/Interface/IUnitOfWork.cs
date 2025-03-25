@@ -11,7 +11,7 @@ namespace CRM.domain.Interface
         IBranchRepository Branch { get; }
         IOrganizationRepository Organization { get; }
         IUserRepository User { get; }
-        ISuperAdminRepository SuperAdmin { get; }  
+        IMasterAdminRepository MasterAdmin { get; }  
         Task Save();
     }
 }

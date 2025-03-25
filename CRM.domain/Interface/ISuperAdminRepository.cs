@@ -3,8 +3,8 @@ using CRM.domain.Model;
 
 namespace CRM.domain.Interface
 {
-    public interface ISuperAdminRepository : IGenericRepository<SuperAdmin>
+    public interface IMasterAdminRepository : IGenericRepository<MasterAdmin>
     {
-        Task<SuperAdmin> Login(LoginSuperAdminDTO entity);
+        Task<MasterAdmin> Login(LoginMasterAdminDTO entity);
     }
 }
