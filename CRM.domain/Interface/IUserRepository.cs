@@ -9,7 +9,7 @@ namespace CRM.domain.Interface
 
         Task<User?> Login(LoginDTO entity);
 
-        Task<bool> ChangePassword(ChangePasswordDTO entity,string email);
+        Task<bool> ChangePassword(ChangePasswordDTO entity,Guid userId);
 
         Task ResetPassword(User entity);
 

@@ -1,25 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using CRM.Application.DTO;
 using CRM.domain.Interface;
 using CRM.domain.Model;
 using Mapster;
+using Microsoft.AspNetCore.Http;
 
 namespace CRM.Service.BranchService
 {
     public class BranchService : IBranchService
     {
         private readonly IUnitOfWork _unitOfwork;
-        public BranchService(IUnitOfWork unitOfwork)
+        private readonly string _email;
+        public BranchService(IUnitOfWork unitOfwork, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfwork = unitOfwork;
+            _email = httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.Email)!;
         }
-        public async Task AddBranch(AddBranchDTO branch)
+        public async Task AddBranch(AddBranchDTO branchEntity)
         {
-            await _unitOfwork.Branch.Add(branch.Adapt<Branch>());
+            Branch branch = branchEntity.Adapt<Branch>();
+            branch.Created_By = _email;
+            branch.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
+            await _unitOfwork.Branch.Add(branch);
             await _unitOfwork.Save();
         }
 
@@ -44,9 +51,11 @@ namespace CRM.Service.BranchService
             return _unitOfwork.Branch.GetById(id);
         }
 
-        public async Task UpdateBranch(Branch entity)
+        public async Task UpdateBranch(UpdateBranchDTO entity)
         {
-            _unitOfwork.Branch.Update(entity);
+            Branch branch = entity.Adapt<Branch>();
+            branch.Updated_By = _email;
+            _unitOfwork.Branch.Update(branch);
             await _unitOfwork.Save();
         }
     }

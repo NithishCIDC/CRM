@@ -14,7 +14,7 @@ namespace CRM.Service.BranchService
         Task<Branch> GetByEmail(string email);
         Task<IEnumerable<Branch>> GetAll();
         Task<Branch> GetById(Guid id);
-        Task UpdateBranch(Branch entity);
+        Task UpdateBranch(UpdateBranchDTO entity);
         Task DeleteBranch(Branch entity);
     }
 }

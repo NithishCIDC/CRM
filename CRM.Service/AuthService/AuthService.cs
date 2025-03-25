@@ -14,6 +14,7 @@ namespace CRM.Service.AuthService
         private readonly IEmailService _emailService;
         private readonly IOtpService _otpService;
         private readonly string _userEmail;
+        private readonly Guid _userId;
         public AuthService(IUnitOfWork unitOfwork, ITokenService tokenService, IEmailService emailService, IOtpService otpService,IHttpContextAccessor httpContextAccessor)
         {
             _unitOfwork = unitOfwork;
@@ -21,11 +22,12 @@ namespace CRM.Service.AuthService
             _emailService = emailService;
             _otpService = otpService;
             _userEmail = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value!;
+            _userId = Guid.Parse(httpContextAccessor.HttpContext?.User.FindFirst("UserId")?.Value!);
         }
 
         public async Task<bool> ChangePassword(ChangePasswordDTO entity)
         {
-            return await _unitOfwork.User.ChangePassword(entity, _userEmail);
+            return await _unitOfwork.User.ChangePassword(entity, _userId);
         }
 
         public async Task<User?> GetByEmail(string email)
@@ -37,7 +39,7 @@ namespace CRM.Service.AuthService
         {
             var user = await _unitOfwork.User.Login(entity);
             var branch = user != null ? await _unitOfwork.Branch.GetById(user.BranchId):null;
-            return branch != null ? _tokenService.GenerateToken(user!.Id, branch.OrganizationId,user.Role) : null;
+            return branch != null ? _tokenService.GenerateToken(user!.Id,user.Email!, branch.OrganizationId,user.Role) : null;
         }
 
         public async Task Register(User entity)

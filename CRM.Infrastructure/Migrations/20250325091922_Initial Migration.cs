@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CRM.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,20 +15,20 @@ namespace CRM.Infrastructure.Migrations
                 name: "Organization",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Org_Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Org_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Website = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Org_Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Org_type = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Website = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated_At = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,19 +39,18 @@ namespace CRM.Infrastructure.Migrations
                 name: "Branches",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrganizationId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated_At = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,7 +70,7 @@ namespace CRM.Infrastructure.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    OrganizationId = table.Column<int>(type: "int", nullable: false)
+                    OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,20 +87,19 @@ namespace CRM.Infrastructure.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Role = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    BranchId = table.Column<int>(type: "int", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created_At = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated_At = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Created_By = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Updated_By = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

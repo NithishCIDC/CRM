@@ -94,7 +94,7 @@ namespace CRM.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateOrganization(Organization entity)
+        public async Task<IActionResult> UpdateOrganization(UpdateOraganizationDTO entity)
         {
             try
             {
@@ -120,14 +120,14 @@ namespace CRM.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteOrganization(Organization entity)
+        public async Task<IActionResult> DeleteOrganization(Guid Id)
         {
             try
             {
-                var organization = await _organizationservice.GetById(entity.Id);
+                var organization = await _organizationservice.GetById(Id);
                 if (organization is not null)
                 {
-                    await _organizationservice.DeleteOrganization(entity);
+                    await _organizationservice.DeleteOrganization(organization);
                     return Ok(new AuthResponseSuccess { Message = "Organization Successfully Deleted" });
                 }
                 return BadRequest(new AuthResponseError { Error = "Organization Not Found" });

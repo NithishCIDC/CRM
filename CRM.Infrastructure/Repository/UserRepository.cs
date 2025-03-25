@@ -5,6 +5,7 @@ using CRM.domain.Interface;
 using CRM.domain.Model;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Crypto.Generators;
 
 namespace CRM.Infrastructure.Repository
 {
@@ -18,9 +19,9 @@ namespace CRM.Infrastructure.Repository
         }
 
 
-        public async Task<bool> ChangePassword(ChangePasswordDTO entity, string email)
+        public async Task<bool> ChangePassword(ChangePasswordDTO entity, Guid userId )
         {
-            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == email && x.Password == entity.OldPassword);
+            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Password == entity.OldPassword);
 
             if (userData is not null)
             {
@@ -39,11 +40,14 @@ namespace CRM.Infrastructure.Repository
 
         public async Task<User?> Login(LoginDTO entity)
         {
-            return await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email && x.Password == entity.Password);
+            var user =  await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email);
+            return (user != null && BCrypt.Net.BCrypt.Verify(entity.Password, user.Password)) ? user : null;
+
         }
 
         public async Task Register(User entity)
         {
+            entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             await _dbcontext.Users.AddAsync(entity);
             await _dbcontext.SaveChangesAsync();
         }

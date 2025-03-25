@@ -17,13 +17,14 @@ namespace CRM.Application.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(Guid userId, Guid organizationId, int roleId)
+        public string GenerateToken(Guid userId,string email, Guid organizationId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
             var claims = new List<Claim>
                 {
                     new("UserId", userId.ToString()),
+                    new(ClaimTypes.Email,email),
                     new("OrgId", organizationId.ToString()),
                     new(ClaimTypes.Role, roleId.ToString())
                 };

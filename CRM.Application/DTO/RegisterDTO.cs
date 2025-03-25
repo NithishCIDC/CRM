@@ -2,8 +2,7 @@
 {
     public class RegisterDTO
     {
-        public required int OrganizationId { get; set; }
-        public int BranchId { get; set; }
+        public required int BranchId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Password { get; set; }

@@ -39,7 +39,7 @@ namespace CRM.Controllers
                     {
                         return BadRequest(new AuthResponseError { Error = "User Already Exist" });
                     }
-                    await _authService.Register(entity.Adapt<User>());
+                    await _authService.Register(entity.Adapt<User>()); 
                     return Accepted(new AuthResponseSuccess { Message = "User Successfully Registered" });
                 }
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });

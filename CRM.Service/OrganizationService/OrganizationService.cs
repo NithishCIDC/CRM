@@ -2,19 +2,26 @@
 using CRM.domain.Interface;
 using CRM.domain.Model;
 using Mapster;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace CRM.Service.OrganizationService
 {
     public class OrganizationService : IOrganizationService
     {
         private readonly IUnitOfWork _unitOfwork;
-        public OrganizationService(IUnitOfWork unitOfwork)
+        private readonly string _email;
+        public OrganizationService(IUnitOfWork unitOfwork,IHttpContextAccessor httpContextAccessor)
         {
             _unitOfwork = unitOfwork;
+            _email = httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.Email)!;
         }
         public async Task AddOrganization(AddOrganizationDTO org)
         {
-            await _unitOfwork.Organization.Add(org.Adapt<Organization>());
+            Organization organization = org.Adapt<Organization>();
+            organization.Created_By = _email;
+            organization.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
+            await _unitOfwork.Organization.Add(organization);
             await _unitOfwork.Save();
         }
 
@@ -39,9 +46,11 @@ namespace CRM.Service.OrganizationService
            return await _unitOfwork.Organization.GetById(id);
         }
 
-        public async Task UpdateOrganization(Organization organization)
+        public async Task UpdateOrganization(UpdateOraganizationDTO organization)
         {
-           _unitOfwork.Organization.Update(organization);
+            Organization org = organization.Adapt<Organization>();
+            org.Updated_By = _email;
+            _unitOfwork.Organization.Update(org);
            await _unitOfwork.Save();
         }
     }

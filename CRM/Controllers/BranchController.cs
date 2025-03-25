@@ -86,7 +86,7 @@ namespace CRM.Controllers
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> UpdateBranch([FromBody] Branch branch)
+        public async Task<IActionResult> UpdateBranch([FromBody] UpdateBranchDTO branch)
         {
             try
             {
@@ -106,11 +106,11 @@ namespace CRM.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> DeleteBranch(Guid id)
+        public async Task<IActionResult> DeleteBranch(Guid Id)
         {
             try
             {
-                var response = await _branchService.GetById(id);
+                var response = await _branchService.GetById(Id);
                 if (response != null)
                 {
                     await _branchService.DeleteBranch(response);
