@@ -27,13 +27,11 @@ namespace CRM.Service.BranchService
             branch.Created_By = _email;
             branch.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             await _unitOfwork.Branch.Add(branch);
-            await _unitOfwork.Save();
         }
 
         public async Task DeleteBranch(Branch entity)
         {
             await _unitOfwork.Branch.Delete(entity.Id);
-            await _unitOfwork.Save();
         }
 
         public async Task<IEnumerable<Branch>> GetAll()
@@ -41,12 +39,12 @@ namespace CRM.Service.BranchService
             return await _unitOfwork.Branch.GetAll();
         }
 
-        public async Task<Branch> GetByEmail(string email)
+        public async Task<Branch?> GetByEmail(string email)
         {
-           return await _unitOfwork.Branch.GetbyEmail(email);
+           return await _unitOfwork.Branch.GetByEmail(email);
         }
 
-        public Task<Branch> GetById(Guid id)
+        public Task<Branch?> GetById(Guid id)
         {
             return _unitOfwork.Branch.GetById(id);
         }
@@ -55,8 +53,7 @@ namespace CRM.Service.BranchService
         {
             Branch branch = entity.Adapt<Branch>();
             branch.Updated_By = _email;
-            _unitOfwork.Branch.Update(branch);
-            await _unitOfwork.Save();
+            await _unitOfwork.Branch.Update(branch);
         }
     }
 }

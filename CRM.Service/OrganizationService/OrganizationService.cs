@@ -22,13 +22,11 @@ namespace CRM.Service.OrganizationService
             organization.Created_By = _email;
             organization.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             await _unitOfwork.Organization.Add(organization);
-            await _unitOfwork.Save();
         }
 
         public async Task DeleteOrganization(Organization entity)
         {
-            await _unitOfwork.Organization.Delete(entity.Id);
-            await _unitOfwork.Save();    
+            await _unitOfwork.Organization.Delete(entity.Id);  
         }
 
         public async Task<IEnumerable<Organization>> GetAll()
@@ -36,12 +34,12 @@ namespace CRM.Service.OrganizationService
             return await _unitOfwork.Organization.GetAll();
         }
 
-        public async Task<Organization> GetByEmail(string email)
+        public async Task<Organization?> GetByEmail(string email)
         {
-           return await _unitOfwork.Organization.GetbyEmail(email);
+           return await _unitOfwork.Organization.GetByEmail(email);
         }
 
-        public async Task<Organization> GetById(Guid id)
+        public async Task<Organization?> GetById(Guid id)
         {
            return await _unitOfwork.Organization.GetById(id);
         }
@@ -50,8 +48,7 @@ namespace CRM.Service.OrganizationService
         {
             Organization org = organization.Adapt<Organization>();
             org.Updated_By = _email;
-            _unitOfwork.Organization.Update(org);
-           await _unitOfwork.Save();
+            await _unitOfwork.Organization.Update(org);
         }
     }
 }

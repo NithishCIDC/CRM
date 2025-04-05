@@ -20,6 +20,7 @@ namespace CRM.Infrastructure.Repository
         public async Task Add(T entity)
         {
             await _dbcontext.Set<T>().AddAsync(entity);
+            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task Delete(Guid id)
@@ -28,6 +29,7 @@ namespace CRM.Infrastructure.Repository
             if(entity != null)
             {
                 _dbcontext.Set<T>().Remove(entity);
+                await _dbcontext.SaveChangesAsync();
             }
         }
 
@@ -36,15 +38,21 @@ namespace CRM.Infrastructure.Repository
             return await _dbcontext.Set<T>().ToListAsync();
         }
 
-        public async Task<T> GetById(Guid id)
+        public async Task<T?> GetById(Guid id)
         {
             var response = await _dbcontext.Set<T>().FindAsync(id);
-            return response!;
+            return response;
+        }
+        public async Task<T?> GetByEmail(string email)
+        {
+            var response = await _dbcontext.Set<T>().FindAsync(email);
+            return response;
         }
 
-        public void Update(T entity)
+        public async Task Update(T entity)
         {
              _dbcontext.Set<T>().Update(entity);
+            await _dbcontext.SaveChangesAsync();
         }
     }
 }

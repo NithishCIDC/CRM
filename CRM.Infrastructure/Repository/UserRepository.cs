@@ -1,11 +1,8 @@
 ﻿using CRM.Infrastructure.Data;
 using CRM.Application.DTO;
-using CRM.Application.Interfaces;
 using CRM.domain.Interface;
 using CRM.domain.Model;
 using Microsoft.EntityFrameworkCore;
-using Org.BouncyCastle.Ocsp;
-using Org.BouncyCastle.Crypto.Generators;
 
 namespace CRM.Infrastructure.Repository
 {
@@ -30,11 +27,6 @@ namespace CRM.Infrastructure.Repository
                 return true;
             }
             return false;
-        }
-
-        public async Task<User?> GetByEmail(string email)
-        {
-            return await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
 
         public async Task<User?> Login(LoginDTO entity)

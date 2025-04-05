@@ -23,10 +23,5 @@ namespace CRM.Infrastructure.Repository
         public IOrganizationRepository Organization { get; private set; }
 
         public IUserRepository User { get; private set; }
-
-        public async Task Save()
-        {
-            await _dbcontext.SaveChangesAsync();
-        }
     }
 }
