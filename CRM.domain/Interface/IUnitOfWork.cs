@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace CRM.domain.Interface
 {
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork
     {
         IBranchRepository Branch { get; }
         IOrganizationRepository Organization { get; }
         IUserRepository User { get; }
-        IMasterAdminRepository MasterAdmin { get; }  
         Task Save();
     }
 }

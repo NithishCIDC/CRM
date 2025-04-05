@@ -1,9 +1,7 @@
 ﻿using CRM.Application.DTO;
-using CRM.domain.Interface;
-using CRM.domain.Model;
 using CRM.Service.OrganizationService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+
 
 namespace CRM.Controllers
 {
@@ -48,7 +46,7 @@ namespace CRM.Controllers
             }
         }
 
-        [HttpPost("AllOrganization")]
+        [HttpGet("AllOrganization")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

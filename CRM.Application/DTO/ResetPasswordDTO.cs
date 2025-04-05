@@ -8,7 +8,8 @@ namespace CRM.Application.DTO
 {
     public class ResetPasswordDTO
     {
-        public string? NewPassword { get; set; }
-        public string? ConfirmPassword { get; set; }
+        public required string email { get; set; }
+        public required string NewPassword { get; set; }
+        public required string ConfirmPassword { get; set; }
     }
 }

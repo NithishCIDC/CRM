@@ -38,14 +38,14 @@ namespace CRM.Controllers
                     {
                         return BadRequest(new AuthResponseError { Error = "User Already Exist" });
                     }
-                    await _authService.Register(entity.Adapt<User>()); 
+                    await _authService.Register(entity.Adapt<User>());
                     return Accepted(new AuthResponseSuccess { Message = "User Successfully Registered" });
                 }
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new AuthResponseError { Error = ex+" Internal Server Error" });
+                return StatusCode(500, new AuthResponseError { Error = ex + " Internal Server Error" });
             }
         }
 
@@ -63,7 +63,7 @@ namespace CRM.Controllers
                     var token = await _authService.Login(entity);
                     return token == null
                         ? Unauthorized(new AuthResponseError { Error = "Invalid Credentials" })
-                        : Ok(new AuthResponseToken { Message = "Login Successfull", Token = token });
+                        : Ok(new AuthResponseToken { Message = "Login Successfull", Token = token});
                 }
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
@@ -73,22 +73,23 @@ namespace CRM.Controllers
             }
         }
 
-        [HttpPost("password-reset")]
+
+        [HttpPost("forgot-password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GenerateOtp([FromBody] GenerateOtp generateotp)
+        public IActionResult ForgotPassword([FromBody] string email)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var User = _authService.GetByEmail(generateotp.Email!);
+                    var User = _authService.GetByEmail(email);
                     if (User is not null)
                     {
-                        var otp = _otpService.GenerateOtp(generateotp.Email!);
-                        _emailService.Email(generateotp.Email!, "Reset Password", $"Your <b>Reset Password OTP</b> is \"{otp}\"");
+                        var otp = _otpService.GenerateOtp(email);
+                        _emailService.Email(email, "Reset Password", $"Your <b>Reset Password OTP</b> is \"{otp}\"");
                         return Ok(new AuthResponseSuccess { Message = "OTP Sent successfully" });
                     }
                     return NotFound(new AuthResponseError { Error = "User Not Found" });
@@ -104,18 +105,19 @@ namespace CRM.Controllers
 
         }
 
-        [HttpPost("password-reset/verify")]
+        [HttpPost("verify-otp")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult VerifyOtp([FromBody] VerifyOtpDTO verifyOtp)
+        public IActionResult VerifyOtp([FromBody] VerifyOtpDTO entity)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var result = _otpService.VerifyOtp(verifyOtp.Otp!);
-                    return Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" });
+                    return _otpService.VerifyOtp(entity)
+                    ? Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" })
+                    : BadRequest(new AuthResponseError { Error = "Invalid OTP" });
                 }
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
@@ -126,7 +128,7 @@ namespace CRM.Controllers
 
         }
 
-        [HttpPost("password-reset/new-password")]
+        [HttpPost("reset-password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -134,12 +136,12 @@ namespace CRM.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (ModelState.IsValid && _otpService.GetVerifiedEmail(entity.email))
                 {
                     var result = await _authService.ResetPassword(entity);
                     return result
                         ? Ok(new AuthResponseSuccess { Message = "Password Reset Successfully" })
-                        : BadRequest(new AuthResponseError { Error = "Reset the Password is failed Due to Invalid Credential" });
+                        : BadRequest(new AuthResponseError { Error = "Failed to Reset the Password" });
                 }
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }

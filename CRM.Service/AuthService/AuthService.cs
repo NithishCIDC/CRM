@@ -13,16 +13,17 @@ namespace CRM.Service.AuthService
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
         private readonly IOtpService _otpService;
-        private readonly string _userEmail;
+        private readonly string? _userEmail;
         private readonly Guid _userId;
-        public AuthService(IUnitOfWork unitOfwork, ITokenService tokenService, IEmailService emailService, IOtpService otpService,IHttpContextAccessor httpContextAccessor)
+        public AuthService(IUnitOfWork unitOfwork, ITokenService tokenService, IEmailService emailService, IOtpService otpService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfwork = unitOfwork;
             _tokenService = tokenService;
             _emailService = emailService;
             _otpService = otpService;
-            _userEmail = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value!;
-            _userId = Guid.Parse(httpContextAccessor.HttpContext?.User.FindFirst("UserId")?.Value!);
+            _userEmail = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
+            var userIdString = httpContextAccessor.HttpContext?.User.FindFirst("UserId")?.Value;
+            _userId = userIdString != null ? Guid.Parse(userIdString) : Guid.Empty;
         }
 
         public async Task<bool> ChangePassword(ChangePasswordDTO entity)
@@ -38,8 +39,8 @@ namespace CRM.Service.AuthService
         public async Task<string?> Login(LoginDTO entity)
         {
             var user = await _unitOfwork.User.Login(entity);
-            var branch = user != null ? await _unitOfwork.Branch.GetById(user.BranchId):null;
-            return branch != null ? _tokenService.GenerateToken(user!.Id,user.Email!, branch.OrganizationId,user.Role) : null;
+            var branch = user != null ? await _unitOfwork.Branch.GetById(user.BranchId) : null;
+            return branch != null ? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
         }
 
         public async Task Register(User entity)
@@ -52,12 +53,10 @@ namespace CRM.Service.AuthService
 
         public async Task<bool> ResetPassword(ResetPasswordDTO entity)
         {
-            var email = _otpService.GetVerifiedEmail();
-            var resetdata = await GetByEmail(email!);
-            if (resetdata is not null && entity.NewPassword == entity.ConfirmPassword)
+           
+            if (entity.NewPassword == entity.ConfirmPassword)
             {
-                resetdata.Password = entity.NewPassword;
-                await _unitOfwork.User.ResetPassword(resetdata);
+                await _unitOfwork.User.ResetPassword(entity);
                 return true;
             }
             return false;

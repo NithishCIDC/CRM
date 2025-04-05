@@ -8,6 +8,7 @@ namespace CRM.Application.DTO
 {
     public class VerifyOtpDTO
     {
-        public string? Otp { get; set; }
+        public required string Email { get; set; }
+        public required string Otp { get; set; }
     }
 }

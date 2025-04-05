@@ -9,7 +9,7 @@ using Org.BouncyCastle.Crypto.Generators;
 
 namespace CRM.Infrastructure.Repository
 {
-    public class UserRepository :  GenericRepository<User> , IUserRepository
+    public class UserRepository : GenericRepository<User>, IUserRepository
     {
         private readonly ApplicationDbContext _dbcontext;
 
@@ -18,14 +18,13 @@ namespace CRM.Infrastructure.Repository
             _dbcontext = dbContext;
         }
 
-
-        public async Task<bool> ChangePassword(ChangePasswordDTO entity, Guid userId )
+        public async Task<bool> ChangePassword(ChangePasswordDTO entity, Guid userId)
         {
-            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Id == userId && x.Password == entity.OldPassword);
+            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Id == userId);
 
-            if (userData is not null)
+            if (userData is not null && BCrypt.Net.BCrypt.Verify(entity.OldPassword, userData.Password))
             {
-                userData.Password = entity.NewPassword;
+                userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
                 _dbcontext.Users.Update(userData);
                 await _dbcontext.SaveChangesAsync();
                 return true;
@@ -40,9 +39,8 @@ namespace CRM.Infrastructure.Repository
 
         public async Task<User?> Login(LoginDTO entity)
         {
-            var user =  await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email);
-            return (user != null && BCrypt.Net.BCrypt.Verify(entity.Password, user.Password)) ? user : null;
-
+            var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email);
+            return(user != null && BCrypt.Net.BCrypt.Verify(entity.Password, user.Password)) ? user : null;
         }
 
         public async Task Register(User entity)
@@ -52,10 +50,15 @@ namespace CRM.Infrastructure.Repository
             await _dbcontext.SaveChangesAsync();
         }
 
-        public async Task ResetPassword(User entity)
+        public async Task ResetPassword(ResetPasswordDTO entity)
         {
-            _dbcontext.Users.Update(entity);
-            await _dbcontext.SaveChangesAsync();
+            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.email);
+            if (userData is not null)
+            {
+                userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
+                _dbcontext.Users.Update(userData);
+                await _dbcontext.SaveChangesAsync();
+            }
         }
     }
 }

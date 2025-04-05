@@ -1,4 +1,5 @@
-﻿using CRM.Application.Interfaces;
+﻿using CRM.Application.DTO;
+using CRM.Application.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using System;
 
@@ -22,20 +23,20 @@ namespace CRM.Application.Service
             return otp;
         }
 
-        public bool VerifyOtp(string otp)
+        public bool VerifyOtp(VerifyOtpDTO entity)
         {
-            if (_memoryCache.TryGetValue(otp, out string? email))
+            if (_memoryCache.TryGetValue(entity.Otp, out string? email) && entity.Email == email)
             {
-                _memoryCache.Remove(otp);
-                _memoryCache.Set("verify_email", email, _expireduration);
+                _memoryCache.Remove(entity.Otp);
+                _memoryCache.Set($"verified-Email-{email}",email,_expireduration);
                 return true;
             }
             return false;
         }
 
-        public string? GetVerifiedEmail()
+        public bool GetVerifiedEmail(string email)
         {
-            return _memoryCache.TryGetValue("verify_email", out string? email) ? email : null;
+            return _memoryCache.TryGetValue($"verified-Email-{email}",out _);
         }
     }
 }
