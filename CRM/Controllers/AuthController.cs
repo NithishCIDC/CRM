@@ -5,6 +5,7 @@ using Mapster;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using CRM.Service.AuthService;
+using Serilog;
 
 namespace CRM.Controllers
 {
@@ -36,16 +37,20 @@ namespace CRM.Controllers
                     var User = _authService.GetByEmail(entity.Email!);
                     if (User is not null)
                     {
+                        Log.Warning("User Already Exist");
                         return BadRequest(new AuthResponseError { Error = "User Already Exist" });
                     }
                     await _authService.Register(entity.Adapt<User>());
+                    Log.Information("User Successfully Registered");
                     return Accepted(new AuthResponseSuccess { Message = "User Successfully Registered" });
                 }
+                Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new AuthResponseError { Error = ex + " Internal Server Error" });
+                Log.Error("Internal Server Error: ", ex);
+                return StatusCode(500, new AuthResponseError { Error = " Internal Server Error" });
             }
         }
 
@@ -61,14 +66,20 @@ namespace CRM.Controllers
                 if (ModelState.IsValid)
                 {
                     var token = await _authService.Login(entity);
-                    return token == null
-                        ? Unauthorized(new AuthResponseError { Error = "Invalid Credentials" })
-                        : Ok(new AuthResponseToken { Message = "Login Successfull", Token = token});
+                    if (token == null)
+                    {
+                        Log.Warning("Invalid Credentials");
+                        return Unauthorized(new AuthResponseError { Error = "Invalid Credentials" });
+                    }
+                    Log.Information("Login Successfully ");
+                    Ok(new AuthResponseToken { Message = "Login Successfull", Token = token });
                 }
+                Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error("Internal Server Error: ", ex);
                 return StatusCode(500, new AuthResponseError { Error = "Internal Server Error" });
             }
         }
@@ -85,21 +96,25 @@ namespace CRM.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var User =await _authService.GetByEmail(email);
+                    var User = await _authService.GetByEmail(email);
                     if (User is not null)
                     {
                         var otp = _otpService.GenerateOtp(email);
                         _emailService.Email(email, "Reset Password", $"Your <b>Reset Password OTP</b> is \"{otp}\"");
+                        Log.Information("OTP Sent successfully");
                         return Ok(new AuthResponseSuccess { Message = "OTP Sent successfully" });
                     }
+                    Log.Warning("User Not Found");
                     return NotFound(new AuthResponseError { Error = "User Not Found" });
                 }
+                Log.Warning("Email Requied for generate Password");
                 return BadRequest(new AuthResponseError { Error = "Email Requied for generate Password" });
 
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error("Internal Server Error " + ex);
                 return StatusCode(500, new AuthResponseError { Error = "Internal server Error" });
             }
 
@@ -115,14 +130,21 @@ namespace CRM.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    return _otpService.VerifyOtp(entity)
-                    ? Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" })
-                    : BadRequest(new AuthResponseError { Error = "Invalid OTP" });
+                    bool otpentity = _otpService.VerifyOtp(entity);
+                    if (otpentity)
+                    {
+                        Log.Information("OTP verified Successfully");
+                        Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" });
+                    }
+                    Log.Warning("Invalid OTP");
+                    BadRequest(new AuthResponseError { Error = "Invalid OTP" });
                 }
+                Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error("Internal Server Error" + ex);
                 return StatusCode(500, new AuthResponseError { Error = "Internal Server Error" });
             }
 
@@ -139,14 +161,20 @@ namespace CRM.Controllers
                 if (ModelState.IsValid && _otpService.GetVerifiedEmail(entity.email))
                 {
                     var result = await _authService.ResetPassword(entity);
-                    return result
-                        ? Ok(new AuthResponseSuccess { Message = "Password Reset Successfully" })
-                        : BadRequest(new AuthResponseError { Error = "Failed to Reset the Password" });
+                    if (result)
+                    {
+                        Log.Information("Password Reset Successfully");
+                        return Ok(new AuthResponseSuccess { Message = "Password Reset Successfully" });
+                    }
+                    Log.Warning("Failed to Reset the Password");
+                    BadRequest(new AuthResponseError { Error = "Failed to Reset the Password" });
                 }
+                Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error("Internal Server Error" + ex);
                 return StatusCode(500, new AuthResponseError { Error = "Internal Server Error" });
             }
         }
@@ -163,14 +191,20 @@ namespace CRM.Controllers
                 if (ModelState.IsValid)
                 {
                     var result = await _authService.ChangePassword(entity);
-                    return result
-                        ? Ok(new AuthResponseSuccess { Message = "Password Changed Successfully" })
-                        : StatusCode(500, new AuthResponseError { Error = "An Error Occurred" });
+                    if(result)
+                    {
+                        Log.Information("Password Changed Successfully");
+                        return Ok(new AuthResponseSuccess { Message = "Password Changed Successfully" });
+                    }
+                    Log.Warning("Invalid User");
+                    return BadRequest( new AuthResponseError { Error = "Invalid User" });
                 }
+                Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error("Internal Server Error "+ex);
                 return StatusCode(500, new AuthResponseError { Error = "Internal Server Error" });
             }
         }
