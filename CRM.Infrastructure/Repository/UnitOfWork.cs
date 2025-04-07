@@ -14,8 +14,6 @@ namespace CRM.Infrastructure.Repository
         public UnitOfWork(ApplicationDbContext dbcontext)
         {
             _dbcontext = dbcontext;
-            Branch = new BranchRepository(_dbcontext);
-            Organization = new OrganizationRepository(_dbcontext);
             User = new UserRepository(_dbcontext);
         }
         public IBranchRepository Branch { get; private set; }
