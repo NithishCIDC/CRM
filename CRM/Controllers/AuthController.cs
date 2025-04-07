@@ -72,7 +72,7 @@ namespace CRM.Controllers
                         return Unauthorized(new AuthResponseError { Error = "Invalid Credentials" });
                     }
                     Log.Information("Login Successfully ");
-                    Ok(new AuthResponseToken { Message = "Login Successfull", Token = token });
+                    return Ok(new AuthResponseToken { Message = "Login Successfull", Token = token });
                 }
                 Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
@@ -134,10 +134,10 @@ namespace CRM.Controllers
                     if (otpentity)
                     {
                         Log.Information("OTP verified Successfully");
-                        Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" });
+                        return Ok(new AuthResponseSuccess { Message = "OTP verified Successfully" });
                     }
                     Log.Warning("Invalid OTP");
-                    BadRequest(new AuthResponseError { Error = "Invalid OTP" });
+                    return BadRequest(new AuthResponseError { Error = "Invalid OTP" });
                 }
                 Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
@@ -167,7 +167,7 @@ namespace CRM.Controllers
                         return Ok(new AuthResponseSuccess { Message = "Password Reset Successfully" });
                     }
                     Log.Warning("Failed to Reset the Password");
-                    BadRequest(new AuthResponseError { Error = "Failed to Reset the Password" });
+                    return BadRequest(new AuthResponseError { Error = "Failed to Reset the Password" });
                 }
                 Log.Warning("Invalid Request");
                 return BadRequest(new AuthResponseError { Error = "Invalid Request" });
