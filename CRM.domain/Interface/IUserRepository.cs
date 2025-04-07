@@ -9,5 +9,6 @@ namespace CRM.domain.Interface
         Task<User?> Login(LoginDTO entity);
         Task<bool> ChangePassword(ChangePasswordDTO entity,Guid userId);
         Task ResetPassword(ResetPasswordDTO entity);
+        Task<Branch?> GetBranch(Guid Id);
     }
 }

@@ -52,5 +52,9 @@ namespace CRM.Infrastructure.Repository
                 await _dbcontext.SaveChangesAsync();
             }
         }
+        public async Task<Branch?> GetBranch(Guid id)
+        {
+            return await _dbcontext.Branches.FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }

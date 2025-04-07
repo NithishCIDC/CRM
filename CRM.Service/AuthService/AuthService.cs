@@ -12,15 +12,13 @@ namespace CRM.Service.AuthService
         private readonly IUnitOfWork _unitOfwork;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
-        private readonly IOtpService _otpService;
         private readonly string? _userEmail;
         private readonly Guid _userId;
-        public AuthService(IUnitOfWork unitOfwork, ITokenService tokenService, IEmailService emailService, IOtpService otpService, IHttpContextAccessor httpContextAccessor)
+        public AuthService(IUnitOfWork unitOfwork, ITokenService tokenService, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfwork = unitOfwork;
             _tokenService = tokenService;
             _emailService = emailService;
-            _otpService = otpService;
             _userEmail = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Email)?.Value;
             var userIdString = httpContextAccessor.HttpContext?.User.FindFirst("UserId")?.Value;
             _userId = userIdString != null ? Guid.Parse(userIdString) : Guid.Empty;
@@ -39,8 +37,8 @@ namespace CRM.Service.AuthService
         public async Task<string?> Login(LoginDTO entity)
         {
             var user = await _unitOfwork.User.Login(entity);
-            var branch = user != null ? await _unitOfwork.Branch.GetById(user.BranchId) : null;
-            return branch != null ? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
+            var branch = user!=null? await _unitOfwork.User.GetBranch(user.BranchId):null;
+            return branch!=null? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
         }
 
         public async Task Register(User entity)
