@@ -61,12 +61,14 @@ builder.Services.AddAuthentication(options =>
 #endregion
 
 #region Serilog
+
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .WriteTo.Console()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+
 #endregion
 
 builder.Services.AddHttpContextAccessor();
@@ -109,7 +111,6 @@ builder.Services.AddSwaggerGen(options =>
 #endregion
 
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

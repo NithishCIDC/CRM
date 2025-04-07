@@ -16,10 +16,6 @@ namespace CRM.Infrastructure.Repository
             _dbcontext = dbcontext;
             User = new UserRepository(_dbcontext);
         }
-        public IBranchRepository Branch { get; private set; }
-
-        public IOrganizationRepository Organization { get; private set; }
-
         public IUserRepository User { get; private set; }
     }
 }
