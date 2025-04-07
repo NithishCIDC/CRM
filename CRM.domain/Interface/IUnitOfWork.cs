@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CRM.domain.Interface
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork :IDisposable
     {
         IUserRepository User { get; }
+
+        Task Save();
     }
 }

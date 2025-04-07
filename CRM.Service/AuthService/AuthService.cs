@@ -26,7 +26,9 @@ namespace CRM.Service.AuthService
 
         public async Task<bool> ChangePassword(ChangePasswordDTO entity)
         {
-            return await _unitOfwork.User.ChangePassword(entity, _userId);
+            bool changePass = await _unitOfwork.User.ChangePassword(entity, _userId);
+            await _unitOfwork.Save();
+            return changePass;
         }
 
         public async Task<User?> GetByEmail(string email)
@@ -46,6 +48,7 @@ namespace CRM.Service.AuthService
             entity.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             entity.Created_By = _userEmail;
             await _unitOfwork.User.Register(entity);
+            await _unitOfwork.Save();
             _emailService.Email(entity.Email!, "Welcome to CRM", "You have successfully registered");
         }
 
@@ -55,6 +58,7 @@ namespace CRM.Service.AuthService
             if (entity.NewPassword == entity.ConfirmPassword)
             {
                 await _unitOfwork.User.ResetPassword(entity);
+                await _unitOfwork.Save();
                 return true;
             }
             return false;

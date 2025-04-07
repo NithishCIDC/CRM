@@ -20,7 +20,6 @@ namespace CRM.Infrastructure.Repository
         public async Task Add(T entity)
         {
             await _dbcontext.Set<T>().AddAsync(entity);
-            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task Delete(Guid id)
@@ -29,7 +28,6 @@ namespace CRM.Infrastructure.Repository
             if(entity != null)
             {
                 _dbcontext.Set<T>().Remove(entity);
-                await _dbcontext.SaveChangesAsync();
             }
         }
 
@@ -52,7 +50,6 @@ namespace CRM.Infrastructure.Repository
         public async Task Update(T entity)
         {
              _dbcontext.Set<T>().Update(entity);
-            await _dbcontext.SaveChangesAsync();
         }
     }
 }

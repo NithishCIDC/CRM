@@ -17,5 +17,15 @@ namespace CRM.Infrastructure.Repository
             User = new UserRepository(_dbcontext);
         }
         public IUserRepository User { get; private set; }
+
+        public void Dispose()
+        {
+            _dbcontext.Dispose();
+        }
+
+        public async Task Save()
+        {
+            await _dbcontext.SaveChangesAsync();
+        }
     }
 }
