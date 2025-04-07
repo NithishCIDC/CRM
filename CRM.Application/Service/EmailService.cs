@@ -29,7 +29,7 @@ namespace CRM.Application.Service
 
             var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(notification));
             channel.BasicPublish(exchange: "", routingKey: "notification-queue", basicProperties: null, body: body);
-            Console.WriteLine("Message published.");
+            Console.WriteLine("Email Sent.");
 
             //var message = new MimeMessage();
             //message.From.Add(new MailboxAddress("CRM", "nithish1206official@gmail.com"));

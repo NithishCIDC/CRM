@@ -79,13 +79,13 @@ namespace CRM.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult ForgotPassword([FromBody] string email)
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var User = _authService.GetByEmail(email);
+                    var User =await _authService.GetByEmail(email);
                     if (User is not null)
                     {
                         var otp = _otpService.GenerateOtp(email);

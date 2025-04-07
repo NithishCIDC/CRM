@@ -45,8 +45,8 @@ namespace CRM.Infrastructure.Repository
         }
         public async Task<T?> GetByEmail(string email)
         {
-            var response = await _dbcontext.Set<T>().FindAsync(email);
-            return response;
+            var entity = await _dbcontext.Set<T>().FirstOrDefaultAsync(e => EF.Property<string>(e, "Email") == email);
+            return entity;
         }
 
         public async Task Update(T entity)
