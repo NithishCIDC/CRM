@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CRM.Application.DTO
@@ -10,6 +11,8 @@ namespace CRM.Application.DTO
     {
         public bool Success { get; } = true;
         public string? Token { get; set; }
+
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? RefreshToken { get; set; }
         public string? Message { get; set; }
     }
