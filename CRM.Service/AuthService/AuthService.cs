@@ -3,6 +3,8 @@ using CRM.Application.Interfaces;
 using CRM.domain.Interface;
 using CRM.domain.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Generators;
 using System.Security.Claims;
 
 namespace CRM.Service.AuthService
@@ -26,9 +28,15 @@ namespace CRM.Service.AuthService
 
         public async Task<bool> ChangePassword(ChangePasswordDTO entity)
         {
-            bool changePass = await _unitOfwork.User.ChangePassword(entity, _userId);
-            await _unitOfwork.Save();
-            return changePass;
+            var userData = await _unitOfwork.User.GetById(_userId);
+            if (userData is not null && BCrypt.Net.BCrypt.Verify(entity.OldPassword, userData.Password))
+            {
+                userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
+                await _unitOfwork.User.Update(userData);
+                await _unitOfwork.Save();
+                return true;
+            }
+            return false;
         }
 
         public async Task<User?> GetByEmail(string email)
@@ -38,26 +46,40 @@ namespace CRM.Service.AuthService
 
         public async Task<string?> Login(LoginDTO entity)
         {
-            var user = await _unitOfwork.User.Login(entity);
-            var branch = user!=null? await _unitOfwork.User.GetBranch(user.BranchId):null;
-            return branch!=null? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
+            var user = await _unitOfwork.User.GetByEmail(entity.Email!);
+            if (user == null || !BCrypt.Net.BCrypt.Verify(entity.Password, user.Password))
+            {
+                return null;
+            }
+            else
+            {
+                var branch = await _unitOfwork.User.GetBranch(user.BranchId);                
+                return branch != null ? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
+            }
+
         }
 
         public async Task Register(User entity)
         {
             entity.Created_At = DateTime.UtcNow.AddHours(5).AddMinutes(30);
             entity.Created_By = _userEmail;
-            await _unitOfwork.User.Register(entity);
+            entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
+            await _unitOfwork.User.Add(entity);
             await _unitOfwork.Save();
             _emailService.Email(entity.Email!, "Welcome to CRM", "You have successfully registered");
         }
 
         public async Task<bool> ResetPassword(ResetPasswordDTO entity)
         {
-           
+
             if (entity.NewPassword == entity.ConfirmPassword)
             {
-                await _unitOfwork.User.ResetPassword(entity);
+                var userdata = await _unitOfwork.User.GetByEmail(entity.email);
+                if (userdata is not null)
+                {
+                    userdata.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
+                    await _unitOfwork.User.Update(userdata);
+                }
                 await _unitOfwork.Save();
                 return true;
             }

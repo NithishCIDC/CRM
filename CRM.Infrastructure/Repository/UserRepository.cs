@@ -15,40 +15,6 @@ namespace CRM.Infrastructure.Repository
             _dbcontext = dbContext;
         }
 
-        public async Task<bool> ChangePassword(ChangePasswordDTO entity, Guid userId)
-        {
-            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Id == userId);
-
-            if (userData is not null && BCrypt.Net.BCrypt.Verify(entity.OldPassword, userData.Password))
-            {
-                userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
-                _dbcontext.Users.Update(userData);
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<User?> Login(LoginDTO entity)
-        {
-            var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.Email);
-            return(user != null && BCrypt.Net.BCrypt.Verify(entity.Password, user.Password)) ? user : null;
-        }
-
-        public async Task Register(User entity)
-        {
-            entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
-            await _dbcontext.Users.AddAsync(entity);
-        }
-
-        public async Task ResetPassword(ResetPasswordDTO entity)
-        {
-            var userData = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Email == entity.email);
-            if (userData is not null)
-            {
-                userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
-                _dbcontext.Users.Update(userData);
-            }
-        }
         public async Task<Branch?> GetBranch(Guid id)
         {
             return await _dbcontext.Branches.FirstOrDefaultAsync(x => x.Id == id);
