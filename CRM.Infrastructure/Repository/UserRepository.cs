@@ -23,7 +23,6 @@ namespace CRM.Infrastructure.Repository
             {
                 userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
                 _dbcontext.Users.Update(userData);
-                await _dbcontext.SaveChangesAsync();
                 return true;
             }
             return false;
@@ -39,7 +38,6 @@ namespace CRM.Infrastructure.Repository
         {
             entity.Password = BCrypt.Net.BCrypt.HashPassword(entity.Password);
             await _dbcontext.Users.AddAsync(entity);
-            await _dbcontext.SaveChangesAsync();
         }
 
         public async Task ResetPassword(ResetPasswordDTO entity)
@@ -49,7 +47,6 @@ namespace CRM.Infrastructure.Repository
             {
                 userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
                 _dbcontext.Users.Update(userData);
-                await _dbcontext.SaveChangesAsync();
             }
         }
         public async Task<Branch?> GetBranch(Guid id)
