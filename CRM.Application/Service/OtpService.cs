@@ -28,7 +28,7 @@ namespace CRM.Application.Service
             if (_memoryCache.TryGetValue(entity.Otp, out string? email) && entity.Email == email)
             {
                 _memoryCache.Remove(entity.Otp);
-                _memoryCache.Set($"verified-Email-{email}",email,_expireduration);
+                _memoryCache.Set($"verified-Email-{email}", email, _expireduration);
                 return true;
             }
             return false;
@@ -36,7 +36,12 @@ namespace CRM.Application.Service
 
         public bool GetVerifiedEmail(string email)
         {
-            return _memoryCache.TryGetValue($"verified-Email-{email}",out _);
+            if (_memoryCache.TryGetValue($"verified-Email-{email}", out _))
+            {
+                _memoryCache.Remove($"verified-Email-{email}");
+                return true;
+            }
+            return false;
         }
     }
 }
