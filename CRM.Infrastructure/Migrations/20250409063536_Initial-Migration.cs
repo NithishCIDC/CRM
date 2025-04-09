@@ -36,6 +36,18 @@ namespace CRM.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Permissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Permission = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Permissions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Branches",
                 columns: table => new
                 {
@@ -67,8 +79,7 @@ namespace CRM.Infrastructure.Migrations
                 name: "UserRoles",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
@@ -112,6 +123,31 @@ namespace CRM.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "RolePermissions",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    PermissionId = table.Column<int>(type: "int", nullable: false),
+                    RoleId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    PermissionId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RolePermissions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_Permissions_PermissionId1",
+                        column: x => x.PermissionId1,
+                        principalTable: "Permissions",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_RolePermissions_UserRoles_RoleId1",
+                        column: x => x.RoleId1,
+                        principalTable: "UserRoles",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Branches_Email",
                 table: "Branches",
@@ -130,6 +166,16 @@ namespace CRM.Infrastructure.Migrations
                 column: "Email",
                 unique: true,
                 filter: "[Email] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolePermissions_PermissionId1",
+                table: "RolePermissions",
+                column: "PermissionId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RolePermissions_RoleId1",
+                table: "RolePermissions",
+                column: "RoleId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRoles_OrganizationId",
@@ -153,10 +199,16 @@ namespace CRM.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "RolePermissions");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Permissions");
+
+            migrationBuilder.DropTable(
+                name: "UserRoles");
 
             migrationBuilder.DropTable(
                 name: "Branches");
