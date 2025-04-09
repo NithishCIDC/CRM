@@ -10,6 +10,7 @@ using System.Text;
 using CRM.Service.AuthService;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using CRM.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -119,6 +120,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<LogContextMiddleware>();
 
 app.UseSerilogRequestLogging();
 
