@@ -15,8 +15,8 @@ namespace CRM.domain.Model
         public string? Country { get; set; }
         public string? Website { get; set; }
         public bool IsActive { get; set; } = true;
-        public ICollection<Branch>? Branches { get; set; }
-        public ICollection<UserRoles>? Roles { get; set; }
+        public ICollection<Branch> Branches { get; set; } = [];
+        public ICollection<UserRoles> Roles { get; set; } = [];
     }
 }
  

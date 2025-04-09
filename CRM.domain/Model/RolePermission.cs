@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace CRM.domain.Model
 {
-    public class UserRoles
+    public class RolePermission
     {
         [Key]
         public Guid Id { get; set; }
-        public string? Role { get; set; }
-        public Guid OrganizationId { get; set; }
-        public Organization? Organization { get; set; }
-        public ICollection<RolePermission> RolePermissions { get; set; } = [];
+        public int RoleId { get; set; }
+        public int PermissionId { get; set; }
+        public UserRoles? Role { get; set; }
+        public Permissions? Permission { get; set; }
     }
 }

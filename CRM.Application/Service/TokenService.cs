@@ -18,7 +18,7 @@ namespace CRM.Application.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(Guid userId,string email, Guid organizationId, int roleId)
+        public string GenerateToken(Guid userId, string email, Guid organizationId, int roleId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);

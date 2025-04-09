@@ -14,6 +14,6 @@ namespace CRM.domain.Model
         public string? Country { get; set; }
         public Guid OrganizationId { get; set; }
         public Organization? Organization { get; set; }
-        public ICollection<User>? Users { get; set; }
+        public ICollection<User>? Users { get; set; } = [];
     }
 }
