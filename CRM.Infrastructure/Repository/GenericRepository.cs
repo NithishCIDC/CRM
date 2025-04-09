@@ -22,9 +22,9 @@ namespace CRM.Infrastructure.Repository
             await _dbcontext.Set<T>().AddAsync(entity);
         }
 
-        public async Task Delete(Guid id)
+        public async void Delete(Guid id)
         {
-            var entity = await _dbcontext.Set<T>().FindAsync(id);
+            var entity = await GetById(id);
             if(entity != null)
             {
                 _dbcontext.Set<T>().Remove(entity);
@@ -47,7 +47,7 @@ namespace CRM.Infrastructure.Repository
             return entity;
         }
 
-        public async Task Update(T entity)
+        public void Update(T entity)
         {
              _dbcontext.Set<T>().Update(entity);
         }

@@ -18,7 +18,7 @@ namespace CRM.Application.Service
             _configuration = configuration;
         }
 
-        public string GenerateToken(Guid userId, string email, Guid organizationId, int roleId)
+        public string GenerateToken(Guid userId, string email, Guid organizationId, Guid roleId, IEnumerable<string> permission)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
@@ -29,6 +29,10 @@ namespace CRM.Application.Service
                     new("OrgId", organizationId.ToString()),
                     new(ClaimTypes.Role, roleId.ToString()),
                 };
+            foreach (var permissions in permission)
+            {
+                claims.Add(new Claim("Permission",permissions));
+            }
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

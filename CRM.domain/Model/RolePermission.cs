@@ -11,8 +11,8 @@ namespace CRM.domain.Model
     {
         [Key]
         public Guid Id { get; set; }
-        public int RoleId { get; set; }
-        public int PermissionId { get; set; }
+        public Guid RoleId { get; set; }
+        public Guid PermissionId { get; set; }
         public UserRoles? Role { get; set; }
         public Permissions? Permission { get; set; }
     }

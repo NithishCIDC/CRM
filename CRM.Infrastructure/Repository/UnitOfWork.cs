@@ -15,8 +15,11 @@ namespace CRM.Infrastructure.Repository
         {
             _dbcontext = dbcontext;
             User = new UserRepository(_dbcontext);
+            RolePermission = new RolePermissionRepository(_dbcontext);
         }
         public IUserRepository User { get; private set; }
+
+        public IRolePermissionRepository RolePermission { get; private set; }
 
         public void Dispose()
         {

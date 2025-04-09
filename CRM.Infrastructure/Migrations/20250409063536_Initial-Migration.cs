@@ -102,7 +102,7 @@ namespace CRM.Infrastructure.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Role = table.Column<int>(type: "int", nullable: false),
+                    Role = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
@@ -128,7 +128,7 @@ namespace CRM.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    RoleId = table.Column<Guid>(type: "int", nullable: false),
                     PermissionId = table.Column<int>(type: "int", nullable: false),
                     RoleId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     PermissionId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)

@@ -10,6 +10,8 @@ namespace CRM.domain.Interface
     {
         IUserRepository User { get; }
 
+        IRolePermissionRepository RolePermission { get; }
+
         Task Save();
     }
 }

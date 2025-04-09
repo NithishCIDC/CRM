@@ -32,7 +32,7 @@ namespace CRM.Service.AuthService
             if (userData is not null && BCrypt.Net.BCrypt.Verify(entity.OldPassword, userData.Password))
             {
                 userData.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
-                await _unitOfwork.User.Update(userData);
+                _unitOfwork.User.Update(userData);
                 await _unitOfwork.Save();
                 return true;
             }
@@ -53,8 +53,9 @@ namespace CRM.Service.AuthService
             }
             else
             {
-                var branch = await _unitOfwork.User.GetBranch(user.BranchId);                
-                return branch != null ? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.Role) : null;
+                var branch = await _unitOfwork.User.GetBranch(user.BranchId);
+                var Permissions = await _unitOfwork.RolePermission.GetPermissionsByRoleId(user.RoleId);
+                return branch != null ? _tokenService.GenerateToken(user!.Id, user.Email!, branch.OrganizationId, user.RoleId, Permissions) : null;
             }
 
         }
@@ -78,7 +79,7 @@ namespace CRM.Service.AuthService
                 if (userdata is not null)
                 {
                     userdata.Password = BCrypt.Net.BCrypt.HashPassword(entity.NewPassword);
-                    await _unitOfwork.User.Update(userdata);
+                    _unitOfwork.User.Update(userdata);
                 }
                 await _unitOfwork.Save();
                 return true;
